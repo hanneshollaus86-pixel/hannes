@@ -658,6 +658,44 @@ textarea:focus-visible,[tabindex]:focus-visible,.ch:focus-visible,.k-row:focus-v
 .stat-row .sv{color:var(--t1);font-family:'JetBrains Mono',monospace;font-weight:600}
 .stat-row .sv.ac{color:var(--ac)}
 
+/* === V35: BASEMAP-SCHNELLLEISTE === */
+#bm-bar{position:absolute;bottom:calc(68px + var(--sab));left:50%;transform:translateX(-50%);z-index:450;display:flex;gap:4px;background:rgba(10,14,20,.9);border:1px solid var(--bd);border-radius:12px;padding:5px;backdrop-filter:blur(16px);box-shadow:0 8px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);pointer-events:auto}
+#bm-bar .bq{display:flex;flex-direction:column;align-items:center;gap:3px;width:52px;padding:4px 2px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .15s;background:transparent}
+#bm-bar .bq:hover{background:rgba(255,255,255,.06);border-color:var(--bd)}
+#bm-bar .bq.on{background:rgba(232,168,32,.12);border-color:var(--ac)}
+#bm-bar .bq-thumb{width:36px;height:28px;border-radius:5px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+#bm-bar .bq-lbl{font-family:'Barlow Condensed',sans-serif;font-size:.56rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);line-height:1;text-align:center}
+#bm-bar .bq.on .bq-lbl{color:var(--ac)}
+
+/* === V35: WAKE LOCK FAB === */
+.fab#fab-wake.active{background:linear-gradient(180deg,#50e890,var(--ok));color:#000;border-color:var(--ok);box-shadow:0 6px 22px rgba(52,208,88,.45)}
+.fab#fab-wake .wl-ring{position:absolute;inset:-4px;border-radius:14px;border:2px solid var(--ok);opacity:0;pointer-events:none;transition:opacity .3s}
+.fab#fab-wake.active .wl-ring{animation:wl-pulse 2s ease infinite}
+@keyframes wl-pulse{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.5;transform:scale(1.1)}}
+
+/* === V35: CANVAS HUD === */
+#hud-canvas{position:absolute;bottom:calc(130px + var(--sab));right:calc(14px + env(safe-area-inset-right));z-index:440;pointer-events:none;width:96px;height:96px}
+
+/* === V35: WMS-OVERLAY === */
+.wms-row{margin-top:4px;display:flex;flex-direction:column;gap:4px}
+.wms-input-wrap{display:flex;gap:4px;align-items:stretch}
+.wms-input-wrap input{flex:1;background:var(--bg);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;color:var(--t1);font-size:.7rem;font-family:'JetBrains Mono',monospace;min-width:0}
+.wms-input-wrap input:focus{outline:none;border-color:var(--ac)}
+.wms-input-wrap input::placeholder{color:var(--t3);font-size:.64rem}
+.wms-add-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;color:var(--ac);font-size:.72rem;padding:5px 8px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.04em;white-space:nowrap;transition:all .15s}
+.wms-add-btn:hover{border-color:var(--ac);background:var(--acd)}
+.wms-active{display:flex;align-items:center;gap:5px;padding:4px 7px;background:rgba(52,208,88,.08);border:1px solid rgba(52,208,88,.2);border-radius:5px;font-size:.7rem}
+.wms-active-name{flex:1;color:var(--ok);font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wms-rm{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color .15s}
+.wms-rm:hover{color:var(--err)}
+
+/* === V35: ADRESS-GEOCODING === */
+.sr-item.addr{border-left:2px solid var(--gps)}
+.sr-addr-ico{width:10px;height:10px;border-radius:2px;background:var(--gps);flex-shrink:0}
+.sr-geocoding{display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:.68rem;color:var(--t3);border-bottom:1px solid var(--hair);font-family:'JetBrains Mono',monospace}
+.sr-geocoding svg{width:12px;height:12px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 <body>
@@ -786,6 +824,15 @@ textarea:focus-visible,[tabindex]:focus-visible,.ch:focus-visible,.k-row:focus-v
     <div class="k-info" style="margin-top:4px">🗺️ Der historische 1973er-Lageplan liegt halbtransparent über dem Satellitenbild. Mit <b>📐 Kalibrieren</b> ziehst du die <b>4 Eckpunkte</b> (A·B·C·D) auf eindeutige Geländepunkte – der Plan wird dabei perspektivisch entzerrt. Mit <b>🔒 Fixieren</b> sperrst du die fertige Lage gegen versehentliches Verschieben. Alles wird lokal gespeichert.</div>
 
     <div class="ovr"><div class="ovr-ck" id="bm-ovr-ck"></div><span class="ovr-lb" style="font-size:.72rem">Beschriftung (Overlay)</span></div>
+    <div class="ovr" id="wms-ovr-row"><div class="ovr-ck" id="wms-ck"></div><span class="ovr-lb" style="font-size:.72rem">Fremdleitungen WMS</span><a href="https://www.e-leitungsauskunft.at" target="_blank" rel="noopener" style="font-size:.6rem;color:var(--gps);text-decoration:none;margin-left:auto" title="Leitungsauskunft öffnen">📋 Auskunft</a></div>
+    <div class="wms-row" id="wms-row">
+      <div class="wms-input-wrap">
+        <input type="url" id="wms-url-in" placeholder="https://…/wms?SERVICE=WMS&…" title="WMS GetMap URL einfügen">
+        <button class="wms-add-btn" id="wms-add-btn">Laden</button>
+      </div>
+      <div id="wms-active-list"></div>
+      <div style="font-size:.62rem;color:var(--t3);line-height:1.4;padding:3px 2px">Beispiel: Land AT Leitungskataster WMS · Gemeinde-Dienste · SAGIS</div>
+    </div>
     <div class="sl">GPS</div>
     <div class="gc">
       <div class="gc-sr"><div class="gc-led" id="gl"></div><span id="gt">Inaktiv</span><button class="bgps" id="bgps">Start</button></div>
@@ -825,7 +872,29 @@ textarea:focus-visible,[tabindex]:focus-visible,.ch:focus-visible,.k-row:focus-v
   <button class="fab" id="fab-snip" title="Bereich ausschneiden (Rechteck aufziehen)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="3,2"/><circle cx="3" cy="3" r="1.6" fill="currentColor" stroke="none"/><circle cx="21" cy="21" r="1.6" fill="currentColor" stroke="none"/></svg></button>
   <button class="fab" id="fab-zoom" title="Alles zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
   <button class="fab" id="fab-keyboard" title="Tastaturkürzel (?)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/></svg></button>
+  <button class="fab" id="fab-wake" title="Bildschirm wachhhalten (Wake Lock)" style="position:relative"><div class="wl-ring"></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
 </div>
+<!-- V35: Basemap-Schnellleiste -->
+<div id="bm-bar">
+  <div class="bq on" data-bq="esri" title="ESRI Satellite">
+    <div class="bq-thumb" style="background:linear-gradient(135deg,#0a1a10 0%,#1a3a1a 40%,#2a5a2a 100%)"></div>
+    <span class="bq-lbl">Satellit</span>
+  </div>
+  <div class="bq" data-bq="ortho" title="Orthofoto Austria basemap.at">
+    <div class="bq-thumb" style="background:linear-gradient(135deg,#1a2a10 0%,#2a4a18 40%,#3a6a28 100%)"></div>
+    <span class="bq-lbl">Ortho AT</span>
+  </div>
+  <div class="bq" data-bq="topo" title="Topographie Austria">
+    <div class="bq-thumb" style="background:linear-gradient(135deg,#c4d8b0 0%,#a8c090 40%,#e8e4d0 100%)"></div>
+    <span class="bq-lbl">Topo AT</span>
+  </div>
+  <div class="bq" data-bq="terrain" title="Geländemodell Grau">
+    <div class="bq-thumb" style="background:linear-gradient(135deg,#c0b4a0 0%,#d4c8b4 40%,#e0d8c8 100%)"></div>
+    <span class="bq-lbl">Gelände</span>
+  </div>
+</div>
+<!-- V35: Canvas HUD (Kompass, Koordinaten, Maßstab) -->
+<canvas id="hud-canvas" width="192" height="192"></canvas>
 <div class="mban" id="mban"><span id="mban-t">Punkt setzen – Karte antippen</span><button id="mban-x">Abbrechen</button></div>
 <!-- V34: Undo/Redo-Bar -->
 <div class="undo-bar" id="undo-bar">
@@ -4195,6 +4264,309 @@ setInterval(updateStats,3000);
 setTimeout(updateStats,500);
 
 console.log('✅ LeitungsPlaner V34 Pro –',AP.length,'Punkte · Suche · Undo · UTM · Shortcuts aktiv');
+
+// ============================================================================
+// V35: WAKE LOCK – Bildschirm dauerhaft wach halten
+// ----------------------------------------------------------------------------
+(function(){
+  let wakeLockGlobal=null;
+  let wakeActive=false;
+  const btn=document.getElementById('fab-wake');
+  if(!btn)return;
+  if(!('wakeLock' in navigator)){btn.title='Wake Lock nicht verfügbar (HTTP/Browser)';btn.style.opacity='.4';return}
+  async function acquireWake(){
+    try{
+      wakeLockGlobal=await navigator.wakeLock.request('screen');
+      wakeActive=true;
+      btn.classList.add('active');
+      btn.title='Bildschirm immer an (aktiv) – Tippen zum Deaktivieren';
+      wakeLockGlobal.addEventListener('release',()=>{
+        wakeActive=false;btn.classList.remove('active');
+        btn.title='Bildschirm wachhalten (Wake Lock)';
+        wakeLockGlobal=null;
+      });
+    }catch(e){toast('⚠️ Wake Lock: '+e.message)}
+  }
+  async function releaseWake(){
+    if(wakeLockGlobal){try{await wakeLockGlobal.release()}catch(_){}wakeLockGlobal=null}
+    wakeActive=false;btn.classList.remove('active');
+    btn.title='Bildschirm wachhalten (Wake Lock)';
+  }
+  btn.addEventListener('click',async()=>{wakeActive?releaseWake():acquireWake()});
+  // re-acquire after tab switch back
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'&&wakeActive&&!wakeLockGlobal)acquireWake();
+  });
+})();
+
+// ============================================================================
+// V35: BASEMAP-SCHNELLLEISTE
+// ----------------------------------------------------------------------------
+(function(){
+  document.querySelectorAll('#bm-bar .bq').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const k=el.dataset.bq;if(!k||!basemaps[k])return;
+      if(k===curB)return;
+      map.removeLayer(basemaps[curB]);
+      basemaps[k].addTo(map);
+      if(typeof katOn!=='undefined'&&katOn&&typeof bringLayerFront==='function'){bringLayerFront(katL)}
+      if(typeof katNrOn!=='undefined'&&katNrOn&&typeof bringLayerFront==='function'){bringLayerFront(katNrL)}
+      curB=k;
+      // sync sidebar thumbnails
+      document.querySelectorAll('.bmt').forEach(e=>e.classList.toggle('on',e.dataset.bm===k));
+      // sync quick bar
+      document.querySelectorAll('#bm-bar .bq').forEach(e=>e.classList.toggle('on',e.dataset.bq===k));
+      const s=document.getElementById('s-bm');if(s)s.textContent={esri:'ESRI',ortho:'Ortho',topo:'Topo',terrain:'Gel.'}[k]||k;
+    });
+  });
+  // keep in sync when changed via sidebar
+  const _origBmtClick=document.querySelectorAll('.bmt');
+  _origBmtClick.forEach(el=>{
+    const orig=el.onclick;
+    el.addEventListener('click',()=>{
+      setTimeout(()=>{
+        const cur=curB;
+        document.querySelectorAll('#bm-bar .bq').forEach(e=>e.classList.toggle('on',e.dataset.bq===cur));
+      },50);
+    });
+  });
+})();
+
+// ============================================================================
+// V35: CANVAS HUD – Kompass, Koordinaten, Maßstabsbalken
+// ----------------------------------------------------------------------------
+(function(){
+  const cv=document.getElementById('hud-canvas');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const DPR=window.devicePixelRatio||1;
+  cv.width=Math.round(96*DPR);cv.height=Math.round(96*DPR);
+  cv.style.width='96px';cv.style.height='96px';
+  ctx.scale(DPR,DPR);
+  let heading=0;
+  let orientationOk=false;
+
+  function drawHUD(){
+    ctx.clearRect(0,0,96,96);
+    const cx=48,cy=48,r=38;
+    // Hintergrundkreis
+    const bg=ctx.createRadialGradient(cx,cy,r*0.2,cx,cy,r);
+    bg.addColorStop(0,'rgba(13,18,27,.82)');bg.addColorStop(1,'rgba(8,12,18,.9)');
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle=bg;ctx.fill();
+    ctx.strokeStyle='rgba(58,80,120,.7)';ctx.lineWidth=.8;ctx.stroke();
+
+    // Kompassringe
+    ctx.save();ctx.translate(cx,cy);ctx.rotate((-heading*Math.PI)/180);
+    // Haupthimmelsrichtungen
+    const dirs=[['N','#e84040'],['E',null],['S',null],['W',null]];
+    dirs.forEach(([lbl,col],i)=>{
+      const a=(i/4)*Math.PI*2-Math.PI/2;
+      const tx=Math.cos(a)*(r-9),ty=Math.sin(a)*(r-9);
+      ctx.font=`700 ${lbl==='N'?8.5:6.5}px 'Barlow Condensed',sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle=col||'rgba(160,172,190,.9)';
+      ctx.fillText(lbl,tx,ty);
+    });
+    // Zwischenstriche
+    for(let i=0;i<36;i++){
+      const a=(i/36)*Math.PI*2-Math.PI/2;
+      const len=i%9===0?6:i%3===0?4:2.5;
+      const ri=r-1,ro=ri-len;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a)*ri,Math.sin(a)*ri);
+      ctx.lineTo(Math.cos(a)*ro,Math.sin(a)*ro);
+      ctx.strokeStyle=i%9===0?'rgba(200,212,230,.8)':'rgba(100,115,140,.5)';
+      ctx.lineWidth=i%9===0?1.2:.6;ctx.stroke();
+    }
+    ctx.restore();
+
+    // Nordpfeil (zeigt immer nach N)
+    ctx.save();ctx.translate(cx,cy);
+    const na=((-heading)*Math.PI/180)-Math.PI/2;
+    const arLen=r*0.48;
+    // Pfeil rot (N)
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(na)*arLen,Math.sin(na)*arLen);
+    ctx.lineTo(Math.cos(na+Math.PI/2)*5,Math.sin(na+Math.PI/2)*5);
+    ctx.lineTo(Math.cos(na-Math.PI/2)*5,Math.sin(na-Math.PI/2)*5);
+    ctx.closePath();ctx.fillStyle='#e84040';ctx.fill();
+    // Gegenpfeil weiß
+    const sa=na+Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(sa)*arLen,Math.sin(sa)*arLen);
+    ctx.lineTo(Math.cos(sa+Math.PI/2)*5,Math.sin(sa+Math.PI/2)*5);
+    ctx.lineTo(Math.cos(sa-Math.PI/2)*5,Math.sin(sa-Math.PI/2)*5);
+    ctx.closePath();ctx.fillStyle='rgba(200,212,230,.7)';ctx.fill();
+    // Mittelpunkt
+    ctx.beginPath();ctx.arc(0,0,3.5,0,Math.PI*2);
+    ctx.fillStyle='rgba(13,18,27,.9)';ctx.fill();
+    ctx.strokeStyle='rgba(200,212,230,.6)';ctx.lineWidth=.8;ctx.stroke();
+    ctx.restore();
+
+    // Heading-Text
+    ctx.font="600 8px 'JetBrains Mono',monospace";
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=orientationOk?'rgba(230,236,246,.95)':'rgba(120,130,150,.7)';
+    ctx.fillText(Math.round(heading)+'°',cx,cy);
+  }
+
+  // DeviceOrientation
+  function handleOrientation(e){
+    if(e.webkitCompassHeading!=null){heading=e.webkitCompassHeading;orientationOk=true}
+    else if(e.alpha!=null){heading=360-e.alpha;orientationOk=true}
+    drawHUD();
+  }
+  if(window.DeviceOrientationEvent){
+    if(typeof DeviceOrientationEvent.requestPermission==='function'){
+      // iOS 13+ – request on user gesture (GPS button)
+      document.getElementById('fab-locate')?.addEventListener('click',()=>{
+        DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted')window.addEventListener('deviceorientation',handleOrientation)}).catch(()=>{});
+      },{once:true});
+    }else{window.addEventListener('deviceorientation',handleOrientation)}
+  }
+  // Fallback: Karten-Bearing
+  map.on('rotate',()=>{if(!orientationOk){heading=-(map.getBearing?map.getBearing():0);drawHUD()}});
+  drawHUD();
+  setInterval(()=>{if(!orientationOk)drawHUD()},5000);
+})();
+
+// ============================================================================
+// V35: ADRESS-GEOCODING (Nominatim – Österreich bevorzugt)
+// ----------------------------------------------------------------------------
+(function(){
+  const inp=document.getElementById('search-input');
+  const res=document.getElementById('search-results');
+  if(!inp||!res)return;
+
+  let geoTimer=null;
+  let lastQuery='';
+  let geoAbort=null;
+
+  async function geocode(q){
+    if(geoAbort){try{geoAbort.abort()}catch(_){}}
+    geoAbort=new AbortController();
+    try{
+      const url='https://nominatim.openstreetmap.org/search?format=json&limit=4&countrycodes=at&addressdetails=1&q='+encodeURIComponent(q);
+      const r=await fetch(url,{signal:geoAbort.signal,headers:{'Accept-Language':'de','User-Agent':'LeitungsPlaner/35'}});
+      if(!r.ok)return[];
+      return await r.json();
+    }catch(e){return[]}
+  }
+
+  // Hook into existing search input event
+  inp.addEventListener('input',function(){
+    const q=this.value.trim();
+    if(q===lastQuery)return;
+    lastQuery=q;
+    // Existing point search fires immediately – geocoding is delayed
+    clearTimeout(geoTimer);
+    // Remove previous geo results
+    res.querySelectorAll('.sr-item.addr,.sr-geocoding').forEach(e=>e.remove());
+    if(q.length<3)return;
+    // Show spinner
+    const spin=document.createElement('div');spin.className='sr-geocoding';
+    spin.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spin-ico"><path d="M21 12a9 9 0 11-3.05-6.7"/></svg><span>Adressen werden gesucht…</span>';
+    res.appendChild(spin);
+    res.classList.add('show');
+    geoTimer=setTimeout(async()=>{
+      const results=await geocode(q);
+      res.querySelectorAll('.sr-item.addr,.sr-geocoding').forEach(e=>e.remove());
+      if(!results||results.length===0)return;
+      results.forEach(r=>{
+        const it=document.createElement('div');it.className='sr-item addr';
+        const name=r.display_name.split(',').slice(0,3).join(', ');
+        it.innerHTML=`<div class="sr-addr-ico"></div><span class="sr-name">${name}</span><span class="sr-dist" style="font-size:.6rem;color:var(--gps)">📍</span>`;
+        it.addEventListener('click',()=>{
+          const lat=parseFloat(r.lat),lon=parseFloat(r.lon);
+          if(!isNaN(lat)&&!isNaN(lon)){
+            map.setView([lat,lon],17,{animate:true});
+            // Pin-Marker kurz anzeigen
+            const tmp=L.circleMarker([lat,lon],{radius:10,color:'#4d94ff',weight:2,fillColor:'#4d94ff',fillOpacity:.25}).addTo(map);
+            const tmpInner=L.circleMarker([lat,lon],{radius:4,color:'#4d94ff',weight:0,fillColor:'#4d94ff',fillOpacity:1}).addTo(map);
+            setTimeout(()=>{map.removeLayer(tmp);map.removeLayer(tmpInner)},4000);
+          }
+          res.classList.remove('show');inp.value='';
+          res.querySelectorAll('.sr-item.addr,.sr-geocoding').forEach(e=>e.remove());
+        });
+        res.appendChild(it);
+      });
+      res.classList.add('show');
+    },600);
+  });
+})();
+
+// ============================================================================
+// V35: WMS FREMDLEITUNGEN
+// ----------------------------------------------------------------------------
+(function(){
+  const wmsCk=document.getElementById('wms-ck');
+  const wmsRow=document.getElementById('wms-row');
+  const wmsIn=document.getElementById('wms-url-in');
+  const wmsAddBtn=document.getElementById('wms-add-btn');
+  const wmsActiveList=document.getElementById('wms-active-list');
+  if(!wmsCk||!wmsRow)return;
+
+  const wmsLayers=[];
+  let wmsVisible=false;
+
+  wmsCk.addEventListener('click',()=>{
+    wmsVisible=!wmsVisible;
+    wmsCk.classList.toggle('on',wmsVisible);
+    wmsRow.style.display=wmsVisible?'flex':'none';
+    wmsLayers.forEach(({layer})=>{
+      if(wmsVisible)layer.addTo(map);else map.removeLayer(layer);
+    });
+  });
+  wmsRow.style.display='none';
+
+  function addWMSLayer(url){
+    if(!url)return;
+    const baseUrl=url.split('?')[0];
+    // Extract LAYERS param from query string
+    let layersParam='0';
+    try{const u=new URL(url);layersParam=u.searchParams.get('LAYERS')||u.searchParams.get('layers')||'0'}catch(_){}
+    try{
+      const layer=L.tileLayer.wms(baseUrl,{
+        layers:layersParam,transparent:true,format:'image/png',version:'1.1.1',
+        opacity:.75,maxZoom:21
+      });
+      if(wmsVisible)layer.addTo(map);
+      const name=baseUrl.replace(/^https?:\/\//,'').slice(0,28)+'…';
+      wmsLayers.push({layer,name});
+      renderWMSList();
+      if(wmsIn)wmsIn.value='';
+      toast('✅ WMS geladen: '+name);
+    }catch(e){toast('⚠️ WMS Fehler: '+e.message)}
+  }
+
+  function renderWMSList(){
+    if(!wmsActiveList)return;
+    wmsActiveList.innerHTML='';
+    wmsLayers.forEach(({name},i)=>{
+      const row=document.createElement('div');row.className='wms-active';
+      row.innerHTML=`<span class="wms-active-name">✓ ${name}</span><button class="wms-rm" title="Entfernen">✕</button>`;
+      row.querySelector('.wms-rm').addEventListener('click',()=>{
+        map.removeLayer(wmsLayers[i].layer);wmsLayers.splice(i,1);renderWMSList();
+      });
+      wmsActiveList.appendChild(row);
+    });
+  }
+
+  wmsAddBtn?.addEventListener('click',()=>{
+    const url=(wmsIn?.value||'').trim();
+    if(!url){toast('⚠️ Bitte WMS-URL eingeben');return}
+    addWMSLayer(url);
+  });
+  wmsIn?.addEventListener('keydown',e=>{if(e.key==='Enter')wmsAddBtn?.click()});
+})();
+
+// ============================================================================
+// V35: VERSION + LOG
+// ----------------------------------------------------------------------------
+document.querySelector('.title .v') && (document.querySelector('.title .v').textContent='V35');
+document.title='LeitungsPlaner Pro V35 · Adresse · WakeLock · WMS · HUD';
+console.log('✅ LeitungsPlaner V35 Pro – Wake Lock · Basemap-Bar · Canvas HUD · Adresssuche · WMS aktiv');
+
 })();
 </script>
 </body>
